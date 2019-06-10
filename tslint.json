@@ -1,0 +1,7 @@
+{
+	"extends": "@faustbrian/tslint",
+	"rules": {
+		"typedef": false,
+		"no-unsafe-any": false
+	}
+}
