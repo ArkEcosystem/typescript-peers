@@ -13,7 +13,7 @@
 ## Installation
 
 ```bash
-yarn global add @arkecosystem/peers
+yarn add @arkecosystem/peers
 ```
 
 ## Usage
