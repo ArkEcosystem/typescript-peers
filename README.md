@@ -42,7 +42,6 @@ await PeerDiscovery.new("http://dexplorer.ark.io/api/v2/peers")
 	.findPeersWithPlugin("core-api");
 ```
 
-
 ## Testing
 
 ```bash
