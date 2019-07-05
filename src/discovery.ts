@@ -70,7 +70,6 @@ export class PeerDiscovery {
 			...opts,
 			...{
 				headers: {
-					Accept: "application/vnd.core-api.v2+json",
 					"Content-Type": "application/json",
 				},
 				timeout: 3000,

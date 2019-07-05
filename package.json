@@ -1,7 +1,7 @@
 {
 	"name": "@arkecosystem/peers",
 	"version": "0.1.0",
-	"description": "Peer Discovery Implementation in TypeScript.",
+	"description": "A simple TypeScript peer discovery client for the ARK Blockchain.",
 	"homepage": "https://github.com/arkecosystem/peers",
 	"bugs": {
 		"url": "https://github.com/arkecosystem/peers/issues"
@@ -13,9 +13,7 @@
 	"license": "MIT",
 	"author": "Brian Faust <hello@basecode.sh>",
 	"files": [
-		"/bin",
-		"/dist",
-		"/oclif.manifest.json"
+		"/dist"
 	],
 	"main": "dist/index",
 	"types": "dist/index",
@@ -25,8 +23,6 @@
 		"clean": "rimraf .coverage dist tmp",
 		"format": "yarn lint && yarn prettier",
 		"lint": "tslint -c tslint.json -p tslint.json 'src/**/*.ts' --fix",
-		"prepack": "./node_modules/.bin/oclif-dev manifest && npm shrinkwrap",
-		"postpack": "rm -f oclif.manifest.json",
 		"prepublishOnly": "yarn build",
 		"prettier": "prettier --write \"./*.{ts,js,json,md}\" \"./**/*.{ts,js,json,md}\"",
 		"test": "jest",
@@ -73,23 +69,23 @@
 		"got": "^9.6.0",
 		"is-url-superb": "^3.0.0",
 		"lodash.orderby": "^4.6.0",
-		"semver": "^6.1.1"
+		"semver": "^6.2.0"
 	},
 	"devDependencies": {
 		"@faustbrian/tslint": "^0.1.3",
-		"@types/got": "^9.4.4",
+		"@types/got": "^9.6.0",
 		"@types/lodash.orderby": "^4.6.6",
 		"@types/prettier": "^1.16.4",
 		"@types/rimraf": "^2.0.2",
-		"@types/semver": "^6.0.0",
+		"@types/semver": "^6.0.1",
 		"codecov": "^3.5.0",
 		"jest": "^24.8.0",
 		"jest-extended": "^0.11.1",
 		"prettier": "^1.18.2",
 		"rimraf": "^2.6.3",
 		"ts-jest": "^24.0.2",
-		"tslint": "^5.17.0",
-		"typescript": "^3.5.1"
+		"tslint": "^5.18.0",
+		"typescript": "^3.5.2"
 	},
 	"engines": {
 		"node": ">=10.x"

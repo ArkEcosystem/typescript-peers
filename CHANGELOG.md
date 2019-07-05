@@ -7,14 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## 0.2.0 - 2019-05-24
-
-### Changed
-
--   Replaced `meow` with `@oclif` as CLI
-
-## 0.1.0 - 2019-05-16
+## 0.1.0 - 2019-07-05
 
 -   Initial Release
 
-[unreleased]: https://github.com/ARKEcosystem/core/compare/master...develop
+[unreleased]: https://github.com/ARKEcosystem/typescript-peers/compare/master...develop
