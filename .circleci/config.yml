@@ -57,4 +57,4 @@ workflows:
         jobs:
             - node-10
             - node-11
-            # - node-12
+            - node-12
