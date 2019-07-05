@@ -101,7 +101,20 @@ export class PeerDiscovery {
 				const port: number = peer.ports[pluginName];
 
 				if (port >= 1 && port <= 65535) {
-					peers.push({ ip: peer.ip, port });
+					const peerData = {
+						ip: peer.ip,
+						port
+					};
+					if (opts.additional && Array.isArray(opts.additional)) {
+						for (const additional of opts.additional) {
+							if (typeof peer[additional] === 'undefined') {
+								continue;
+							}
+							
+							peersData[additional] = peer[additional];
+						}
+					}
+					peers.push(peerData);
 				}
 			}
 		}
