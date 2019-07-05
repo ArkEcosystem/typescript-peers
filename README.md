@@ -6,8 +6,8 @@
 
 [![Latest Version](https://badgen.now.sh/npm/v/@arkecosystem/peers)](https://www.npmjs.com/package/@arkecosystem/peers)
 [![Node Engine](https://badgen.now.sh/npm/node/@arkecosystem/peers)](https://www.npmjs.com/package/@arkecosystem/peers)
-[![Build Status](https://badgen.now.sh/circleci/github/ArkEcosystem/peers)](https://circleci.com/gh/ArkEcosystem/peers)
-[![Codecov](https://badgen.now.sh/codecov/c/github/ArkEcosystem/peers)](https://codecov.io/gh/ArkEcosystem/peers)
+[![Build Status](https://badgen.now.sh/circleci/github/ArkEcosystem/typescript-peers)](https://circleci.com/gh/ArkEcosystem/typescript-peers)
+[![Codecov](https://badgen.now.sh/codecov/c/github/ArkEcosystem/typescript-peers)](https://codecov.io/gh/ArkEcosystem/typescript-peers)
 [![License: MIT](https://badgen.now.sh/badge/license/MIT/green)](https://opensource.org/licenses/MIT)
 
 ## Installation
