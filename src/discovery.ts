@@ -67,7 +67,7 @@ export class PeerDiscovery {
 
 		const seed: IPeer = this.seeds[Math.floor(Math.random() * this.seeds.length)];
 
-		const { body } = await got.get(`http://${seed.ip}:${seed.port}/api/peers`, {
+		const { body } = await got.get(`http://${seed.ip}:${seed.port}/api/v2/peers`, {
 			...opts,
 			...{
 				headers: {
