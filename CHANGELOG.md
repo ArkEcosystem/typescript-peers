@@ -7,8 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## 0.1.0 - 2019-07-05
+## [0.1.2] - 2019-07-06
+
+### Added
+
+-   Return additional peer data ([#2])
+
+### Fixed
+
+-   Force v2 peer endpoint ([#3])
+
+## [0.1.0] - 2019-07-05
 
 -   Initial Release
 
 [unreleased]: https://github.com/ARKEcosystem/typescript-peers/compare/master...develop
+[0.1.2]: https://github.com/ARKEcosystem/core/compare/0.1.0...0.1.2
+[0.1.0]: https://github.com/ARKEcosystem/core/tree/0.1.0
+[#2]: https://github.com/ArkEcosystem/typescript-peers/pull/2
+[#3]: https://github.com/ArkEcosystem/typescript-peers/pull/3
