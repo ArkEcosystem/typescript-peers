@@ -10,6 +10,8 @@
 [![Codecov](https://badgen.now.sh/codecov/c/github/ArkEcosystem/typescript-peers)](https://codecov.io/gh/ArkEcosystem/typescript-peers)
 [![License: MIT](https://badgen.now.sh/badge/license/MIT/green)](https://opensource.org/licenses/MIT)
 
+> Lead Maintainer: [Brian Faust](https://github.com/faustbrian)
+
 ## Installation
 
 ```bash
