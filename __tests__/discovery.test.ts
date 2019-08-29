@@ -15,7 +15,9 @@ describe("PeerDiscovery", () => {
 					data: dummyPeersWalletApi,
 				});
 
-			const peerDiscovery: PeerDiscovery = await PeerDiscovery.new("http://127.0.0.1/api/v2/peers");
+			const peerDiscovery: PeerDiscovery = await PeerDiscovery.new({
+				networkOrHost: "http://127.0.0.1/api/v2/peers",
+			});
 
 			expect(peerDiscovery.getSeeds()).toEqual(dummyPeersWalletApi.map(peer => ({
 				ip: peer.ip,
@@ -30,7 +32,9 @@ describe("PeerDiscovery", () => {
 					data: dummyPeersPublicApi,
 				});
 
-			const peerDiscovery: PeerDiscovery = await PeerDiscovery.new("http://127.0.0.1/api/v2/peers");
+			const peerDiscovery: PeerDiscovery = await PeerDiscovery.new({
+				networkOrHost: "http://127.0.0.1/api/v2/peers",
+			});
 
 			expect(peerDiscovery.getSeeds()).toEqual(dummyPeersPublicApi.map(peer => ({
 				ip: peer.ip, port: 4103,
@@ -42,7 +46,7 @@ describe("PeerDiscovery", () => {
 				.get("/mainnet.json")
 				.reply(200, dummySeeds);
 
-			const peerDiscovery: PeerDiscovery = await PeerDiscovery.new("mainnet");
+			const peerDiscovery: PeerDiscovery = await PeerDiscovery.new({ networkOrHost: "mainnet" });
 
 			expect(peerDiscovery.getSeeds()).toEqual(dummySeeds);
 		});
@@ -52,7 +56,9 @@ describe("PeerDiscovery", () => {
 				.get("/failnet.json")
 				.reply(404);
 
-			await expect(PeerDiscovery.new("failnet")).rejects.toThrowError(new Error("Failed to discovery any peers."));
+			await expect(PeerDiscovery.new({
+				networkOrHost: "failnet",
+			})).rejects.toThrowError(new Error("Failed to discovery any peers."));
 		});
 	});
 
@@ -65,7 +71,7 @@ describe("PeerDiscovery", () => {
 					data: dummyPeersWalletApi,
 				});
 
-			peerDiscovery = await PeerDiscovery.new("http://127.0.0.1/api/v2/peers");
+			peerDiscovery = await PeerDiscovery.new({ networkOrHost: "http://127.0.0.1/api/v2/peers" });
 		});
 
 		it("should find peers", async () => {
@@ -170,7 +176,7 @@ describe("PeerDiscovery", () => {
 					data: dummyPeersWalletApi,
 				});
 
-			peerDiscovery = await PeerDiscovery.new("http://127.0.0.1/api/v2/peers");
+			peerDiscovery = await PeerDiscovery.new({ networkOrHost: "http://127.0.0.1/api/v2/peers" });
 		});
 
 		it("should find peers without the wallet api plugin", async () => {

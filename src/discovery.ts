@@ -12,8 +12,14 @@ export class PeerDiscovery {
 
 	private constructor(private readonly seeds: IPeer[]) {}
 
-	public static async new(networkOrHost: string, defaultPort: number = 4003): Promise<PeerDiscovery> {
+	public static async new({
+		networkOrHost, defaultPort = 4003
+	}: { networkOrHost: string, defaultPort?: number }): Promise<PeerDiscovery> {
 		const seeds: IPeer[] = [];
+
+		if (typeof networkOrHost !== "string") {
+			throw new Error("No network or host provided");
+		}
 
 		try {
 			if (isUrl(networkOrHost)) {
