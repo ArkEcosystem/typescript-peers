@@ -8,6 +8,12 @@ beforeEach(() => {
 
 describe("PeerDiscovery", () => {
 	describe("new instance", () => {
+		it("should fail if no network or host is provided", async ({}) => {
+			await expect(PeerDiscovery.new({
+				networkOrHost: null,
+			})).rejects.toThrowError(new Error("No network or host provided"));
+		});
+
 		it("should fetch peers from a seed", async () => {
 			nock("http://127.0.0.1")
 				.get("/api/v2/peers")
