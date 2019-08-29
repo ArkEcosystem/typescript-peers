@@ -1,6 +1,6 @@
 import nock from "nock";
-import { dummySeeds, dummyPeersWalletApi, dummyPeersPublicApi } from "./mocks/peers";
 import { PeerDiscovery } from "../src/discovery";
+import { dummyPeersPublicApi, dummyPeersWalletApi, dummySeeds } from "./mocks/peers";
 
 beforeEach(() => {
 	nock.cleanAll();
@@ -8,68 +8,107 @@ beforeEach(() => {
 
 describe("PeerDiscovery", () => {
 	describe("new instance", () => {
-		it("should fail if no network or host is provided", async ({}) => {
-			await expect(PeerDiscovery.new({
-				networkOrHost: null,
-			})).rejects.toThrowError(new Error("No network or host provided"));
+		it("should fail if no network or host is provided", async () => {
+			await expect(
+				PeerDiscovery.new({
+					networkOrHost: undefined,
+				}),
+			).rejects.toThrowError(new Error("No network or host provided"));
 		});
 
-		it("should fetch peers from a seed", async () => {
-			nock("http://127.0.0.1")
-				.get("/api/v2/peers")
-				.reply(200, {
-					data: dummyPeersWalletApi,
+		describe("host", () => {
+			it("should fetch peers", async () => {
+				nock("http://127.0.0.1")
+					.get("/api/v2/peers")
+					.reply(200, {
+						data: dummyPeersWalletApi,
+					});
+
+				const peerDiscovery: PeerDiscovery = await PeerDiscovery.new({
+					networkOrHost: "http://127.0.0.1/api/v2/peers",
 				});
 
-			const peerDiscovery: PeerDiscovery = await PeerDiscovery.new({
-				networkOrHost: "http://127.0.0.1/api/v2/peers",
+				expect(peerDiscovery.getSeeds()).toEqual(
+					dummyPeersWalletApi.map(peer => ({
+						ip: peer.ip,
+						port: 4140,
+					})),
+				);
 			});
 
-			expect(peerDiscovery.getSeeds()).toEqual(dummyPeersWalletApi.map(peer => ({
-				ip: peer.ip,
-				port: 4140,
-			})));
-		});
+			it("should fetch peers and fallback to public api port", async () => {
+				nock("http://127.0.0.1")
+					.get("/api/v2/peers")
+					.reply(200, {
+						data: dummyPeersPublicApi,
+					});
 
-		it("should fetch peers from a seed and fallback to public api port", async () => {
-			nock("http://127.0.0.1")
-				.get("/api/v2/peers")
-				.reply(200, {
-					data: dummyPeersPublicApi,
+				const peerDiscovery: PeerDiscovery = await PeerDiscovery.new({
+					networkOrHost: "http://127.0.0.1/api/v2/peers",
 				});
 
-			const peerDiscovery: PeerDiscovery = await PeerDiscovery.new({
-				networkOrHost: "http://127.0.0.1/api/v2/peers",
+				expect(peerDiscovery.getSeeds()).toEqual(
+					dummyPeersPublicApi.map(peer => ({
+						ip: peer.ip,
+						port: 4103,
+					})),
+				);
 			});
 
-			expect(peerDiscovery.getSeeds()).toEqual(dummyPeersPublicApi.map(peer => ({
-				ip: peer.ip, port: 4103,
-			})));
+			it("should fail if the seed list is empty", async () => {
+				nock("http://127.0.0.1")
+					.get("/api/v2/peers")
+					.reply(200, {
+						data: [],
+					});
+
+				await expect(
+					PeerDiscovery.new({
+						networkOrHost: "http://127.0.0.1/api/v2/peers",
+					}),
+				).rejects.toThrowError(new Error("No seeds found"));
+			});
 		});
 
-		it("should fetch peers from github", async () => {
-			nock("https://raw.githubusercontent.com/ArkEcosystem/peers/master")
-				.get("/mainnet.json")
-				.reply(200, dummySeeds);
+		describe("github", () => {
+			it("should fetch peers", async () => {
+				nock("https://raw.githubusercontent.com/ArkEcosystem/peers/master")
+					.get("/mainnet.json")
+					.reply(200, dummySeeds);
 
-			const peerDiscovery: PeerDiscovery = await PeerDiscovery.new({ networkOrHost: "mainnet" });
+				const peerDiscovery: PeerDiscovery = await PeerDiscovery.new({ networkOrHost: "mainnet" });
 
-			expect(peerDiscovery.getSeeds()).toEqual(dummySeeds);
-		});
+				expect(peerDiscovery.getSeeds()).toEqual(dummySeeds);
+			});
 
-		it("should fail if could not fetch from github", async () => {
-			nock("https://raw.githubusercontent.com/ArkEcosystem/peers/master")
-				.get("/failnet.json")
-				.reply(404);
+			it("should fail if a 404 response is received", async () => {
+				nock("https://raw.githubusercontent.com/ArkEcosystem/peers/master")
+					.get("/failnet.json")
+					.reply(404);
 
-			await expect(PeerDiscovery.new({
-				networkOrHost: "failnet",
-			})).rejects.toThrowError(new Error("Failed to discovery any peers."));
+				await expect(
+					PeerDiscovery.new({
+						networkOrHost: "failnet",
+					}),
+				).rejects.toThrowError(new Error("Failed to discovery any peers."));
+			});
+
+			it("should fail if the seed list is empty", async () => {
+				nock("https://raw.githubusercontent.com/ArkEcosystem/peers/master")
+					.get("/mainnet.json")
+					.reply(200, []);
+
+				await expect(
+					PeerDiscovery.new({
+						networkOrHost: "mainnet",
+					}),
+				).rejects.toThrowError(new Error("No seeds found"));
+			});
 		});
 	});
 
 	describe("findPeers", () => {
-		let peerDiscovery: PeerDiscovery
+		let peerDiscovery: PeerDiscovery;
 		beforeEach(async () => {
 			nock("http://127.0.0.1")
 				.get("/api/v2/peers")
@@ -115,9 +154,11 @@ describe("PeerDiscovery", () => {
 					data: dummyPeersWalletApi,
 				});
 
-			await expect(peerDiscovery.findPeers({
-				timeout: 1000,
-			})).rejects.toThrowError(new Error("Timeout awaiting 'request' for 1000ms"));
+			await expect(
+				peerDiscovery.findPeers({
+					timeout: 1000,
+				}),
+			).rejects.toThrowError(new Error("Timeout awaiting 'request' for 1000ms"));
 		});
 
 		it("should filter by version", async () => {
@@ -128,11 +169,9 @@ describe("PeerDiscovery", () => {
 					data: dummyPeersWalletApi,
 				});
 
-			let peers = await peerDiscovery.withVersion('2.6.0').findPeers();
-			await expect(peers).toEqual([dummyPeersWalletApi[1]]);
+			await expect(peerDiscovery.withVersion("2.6.0").findPeers()).resolves.toEqual([dummyPeersWalletApi[1]]);
 
-			peers = await peerDiscovery.withVersion('>=2.5.0').findPeers();
-			await expect(peers).toEqual(dummyPeersWalletApi);
+			await expect(peerDiscovery.withVersion(">=2.5.0").findPeers()).resolves.toEqual(dummyPeersWalletApi);
 		});
 
 		it("should filter by latency", async () => {
@@ -143,11 +182,9 @@ describe("PeerDiscovery", () => {
 					data: dummyPeersWalletApi,
 				});
 
-			let peers = await peerDiscovery.withLatency(150).findPeers();
-			await expect(peers).toEqual([dummyPeersWalletApi[1]]);
+			await expect(peerDiscovery.withLatency(150).findPeers()).resolves.toEqual([dummyPeersWalletApi[1]]);
 
-			peers = await peerDiscovery.withLatency(250).findPeers();
-			await expect(peers).toEqual(dummyPeersWalletApi);
+			await expect(peerDiscovery.withLatency(250).findPeers()).resolves.toEqual(dummyPeersWalletApi);
 		});
 
 		it("should sort by latency asc", async () => {
@@ -157,8 +194,10 @@ describe("PeerDiscovery", () => {
 					data: dummyPeersWalletApi,
 				});
 
-			const peers = await peerDiscovery.sortBy('latency', 'asc').findPeers();
-			await expect(peers).toEqual([dummyPeersWalletApi[1], dummyPeersWalletApi[0]]);
+			await expect(peerDiscovery.sortBy("latency", "asc").findPeers()).resolves.toEqual([
+				dummyPeersWalletApi[1],
+				dummyPeersWalletApi[0],
+			]);
 		});
 
 		it("should sort by version desc", async () => {
@@ -168,13 +207,15 @@ describe("PeerDiscovery", () => {
 					data: dummyPeersWalletApi,
 				});
 
-			const peers = await peerDiscovery.sortBy('version', 'desc').findPeers();
-			await expect(peers).toEqual([dummyPeersWalletApi[1], dummyPeersWalletApi[0]]);
+			await expect(peerDiscovery.sortBy("version", "desc").findPeers()).resolves.toEqual([
+				dummyPeersWalletApi[1],
+				dummyPeersWalletApi[0],
+			]);
 		});
 	});
 
 	describe("findPeersWithPlugin", () => {
-		let peerDiscovery: PeerDiscovery
+		let peerDiscovery: PeerDiscovery;
 		beforeEach(async () => {
 			nock("http://127.0.0.1")
 				.get("/api/v2/peers")
@@ -192,7 +233,7 @@ describe("PeerDiscovery", () => {
 					data: dummyPeersPublicApi,
 				});
 
-			expect(await peerDiscovery.findPeersWithPlugin('core-wallet-api')).toEqual([]);
+			expect(await peerDiscovery.findPeersWithPlugin("core-wallet-api")).toEqual([]);
 		});
 
 		it("should find peers with the wallet api plugin", async () => {
@@ -202,8 +243,8 @@ describe("PeerDiscovery", () => {
 					data: dummyPeersWalletApi,
 				});
 
-			const validPeers = dummyPeersWalletApi.map((peer) => ({ ip: peer.ip, port: 4140 }));
-			expect(await peerDiscovery.findPeersWithPlugin('core-wallet-api')).toEqual(validPeers);
+			const validPeers = dummyPeersWalletApi.map(peer => ({ ip: peer.ip, port: 4140 }));
+			expect(await peerDiscovery.findPeersWithPlugin("core-wallet-api")).toEqual(validPeers);
 		});
 	});
 });

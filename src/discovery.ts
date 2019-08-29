@@ -13,13 +13,17 @@ export class PeerDiscovery {
 	private constructor(private readonly seeds: IPeer[]) {}
 
 	public static async new({
-		networkOrHost, defaultPort = 4003
-	}: { networkOrHost: string, defaultPort?: number }): Promise<PeerDiscovery> {
-		const seeds: IPeer[] = [];
-
-		if (typeof networkOrHost !== "string") {
+		networkOrHost,
+		defaultPort = 4003,
+	}: {
+		networkOrHost: string;
+		defaultPort?: number;
+	}): Promise<PeerDiscovery> {
+		if (!networkOrHost || typeof networkOrHost !== "string") {
 			throw new Error("No network or host provided");
 		}
+
+		const seeds: IPeer[] = [];
 
 		try {
 			if (isUrl(networkOrHost)) {
@@ -28,8 +32,8 @@ export class PeerDiscovery {
 				for (const seed of JSON.parse(body).data) {
 					let port = defaultPort;
 					if (seed.ports) {
-						const walletApiPort = seed.ports['@arkecosystem/core-wallet-api'];
-						const apiPort = seed.ports['@arkecosystem/core-api'];
+						const walletApiPort = seed.ports["@arkecosystem/core-wallet-api"];
+						const apiPort = seed.ports["@arkecosystem/core-api"];
 						if (walletApiPort >= 1 && walletApiPort <= 65535) {
 							port = walletApiPort;
 						} else if (apiPort >= 1 && apiPort <= 65535) {
