@@ -78,7 +78,7 @@ describe("PeerDiscovery", () => {
 			nock(/.+/)
 				.get("/api/v2/peers")
 				.reply(200, {
-					data: dummyPeersWalletApi
+					data: dummyPeersWalletApi,
 				});
 
 			expect(await peerDiscovery.findPeers()).toEqual(dummyPeersWalletApi);
@@ -91,7 +91,7 @@ describe("PeerDiscovery", () => {
 				.reply(500)
 				.get("/api/v2/peers")
 				.reply(200, {
-					data: dummyPeersWalletApi
+					data: dummyPeersWalletApi,
 				});
 
 			const peers = await peerDiscovery.findPeers({
@@ -106,7 +106,7 @@ describe("PeerDiscovery", () => {
 				.get("/api/v2/peers")
 				.delay(2000)
 				.reply(200, {
-					data: dummyPeersWalletApi
+					data: dummyPeersWalletApi,
 				});
 
 			await expect(peerDiscovery.findPeers({
@@ -119,7 +119,7 @@ describe("PeerDiscovery", () => {
 				.get("/api/v2/peers")
 				.twice()
 				.reply(200, {
-					data: dummyPeersWalletApi
+					data: dummyPeersWalletApi,
 				});
 
 			let peers = await peerDiscovery.withVersion('2.6.0').findPeers();
@@ -134,7 +134,7 @@ describe("PeerDiscovery", () => {
 				.get("/api/v2/peers")
 				.twice()
 				.reply(200, {
-					data: dummyPeersWalletApi
+					data: dummyPeersWalletApi,
 				});
 
 			let peers = await peerDiscovery.withLatency(150).findPeers();
@@ -148,7 +148,7 @@ describe("PeerDiscovery", () => {
 			nock(/.+/)
 				.get("/api/v2/peers")
 				.reply(200, {
-					data: dummyPeersWalletApi
+					data: dummyPeersWalletApi,
 				});
 
 			const peers = await peerDiscovery.sortBy('latency', 'asc').findPeers();
@@ -159,7 +159,7 @@ describe("PeerDiscovery", () => {
 			nock(/.+/)
 				.get("/api/v2/peers")
 				.reply(200, {
-					data: dummyPeersWalletApi
+					data: dummyPeersWalletApi,
 				});
 
 			const peers = await peerDiscovery.sortBy('version', 'desc').findPeers();
@@ -183,7 +183,7 @@ describe("PeerDiscovery", () => {
 			nock(/.+/)
 				.get("/api/v2/peers")
 				.reply(200, {
-					data: dummyPeersPublicApi
+					data: dummyPeersPublicApi,
 				});
 
 			expect(await peerDiscovery.findPeersWithPlugin('core-wallet-api')).toEqual([]);
@@ -193,7 +193,7 @@ describe("PeerDiscovery", () => {
 			nock(/.+/)
 				.get("/api/v2/peers")
 				.reply(200, {
-					data: dummyPeersWalletApi
+					data: dummyPeersWalletApi,
 				});
 
 			const validPeers = dummyPeersWalletApi.map((peer) => ({ ip: peer.ip, port: 4140 }));
