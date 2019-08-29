@@ -3,7 +3,6 @@ import isUrl from "is-url-superb";
 import orderBy from "lodash.orderby";
 import semver from "semver";
 import { IPeer, IPeerResponse } from "./interfaces";
-import { PeerProperties } from "./types";
 
 export class PeerDiscovery {
 	private version: string | undefined;
@@ -12,23 +11,48 @@ export class PeerDiscovery {
 
 	private constructor(private readonly seeds: IPeer[]) {}
 
-	public static async new(networkOrHost: string): Promise<PeerDiscovery> {
+	public static async new({
+		networkOrHost,
+		defaultPort = 4003,
+	}: {
+		networkOrHost: string;
+		defaultPort?: number;
+	}): Promise<PeerDiscovery> {
+		if (!networkOrHost || typeof networkOrHost !== "string") {
+			throw new Error("No network or host provided");
+		}
+
 		const seeds: IPeer[] = [];
 
-		if (isUrl(networkOrHost)) {
-			const { body } = await got.get(networkOrHost);
+		try {
+			if (isUrl(networkOrHost)) {
+				const { body } = await got.get(networkOrHost);
 
-			for (const seed of JSON.parse(body).data) {
-				seeds.push({ ip: seed.ip, port: 4003 });
-			}
-		} else {
-			const { body } = await got.get(
-				`https://raw.githubusercontent.com/ArkEcosystem/peers/master/${networkOrHost}.json`,
-			);
+				for (const seed of JSON.parse(body).data) {
+					let port = defaultPort;
+					if (seed.ports) {
+						const walletApiPort = seed.ports["@arkecosystem/core-wallet-api"];
+						const apiPort = seed.ports["@arkecosystem/core-api"];
+						if (walletApiPort >= 1 && walletApiPort <= 65535) {
+							port = walletApiPort;
+						} else if (apiPort >= 1 && apiPort <= 65535) {
+							port = apiPort;
+						}
+					}
 
-			for (const seed of JSON.parse(body)) {
-				seeds.push({ ip: seed.ip, port: 4003 });
+					seeds.push({ ip: seed.ip, port });
+				}
+			} else {
+				const { body } = await got.get(
+					`https://raw.githubusercontent.com/ArkEcosystem/peers/master/${networkOrHost}.json`,
+				);
+
+				for (const seed of JSON.parse(body)) {
+					seeds.push({ ip: seed.ip, port: seed.port });
+				}
 			}
+		} catch (error) {
+			throw new Error("Failed to discovery any peers.");
 		}
 
 		if (!seeds.length) {
@@ -36,6 +60,10 @@ export class PeerDiscovery {
 		}
 
 		return new PeerDiscovery(seeds);
+	}
+
+	public getSeeds(): IPeer[] {
+		return this.seeds;
 	}
 
 	public withVersion(version: string): PeerDiscovery {
@@ -62,7 +90,7 @@ export class PeerDiscovery {
 		}
 
 		if (!opts.timeout) {
-			opts.timeout = 1500;
+			opts.timeout = 3000;
 		}
 
 		const seed: IPeer = this.seeds[Math.floor(Math.random() * this.seeds.length)];
@@ -73,7 +101,6 @@ export class PeerDiscovery {
 				headers: {
 					"Content-Type": "application/json",
 				},
-				timeout: 3000,
 			},
 		});
 
@@ -90,7 +117,7 @@ export class PeerDiscovery {
 		return orderBy(peers, [this.orderBy[0]], [this.orderBy[1] as any]);
 	}
 
-	public async findPeersWithPlugin(name: string, opts: { additional?: PeerProperties } = {}): Promise<IPeer[]> {
+	public async findPeersWithPlugin(name: string, opts: { additional?: string[] } = {}): Promise<IPeer[]> {
 		const peers: IPeer[] = [];
 
 		for (const peer of await this.findPeers(opts)) {
