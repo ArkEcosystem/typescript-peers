@@ -246,5 +246,35 @@ describe("PeerDiscovery", () => {
 			const validPeers = dummyPeersWalletApi.map(peer => ({ ip: peer.ip, port: 4140 }));
 			expect(await peerDiscovery.findPeersWithPlugin("core-wallet-api")).toEqual(validPeers);
 		});
+
+		it("should get additional peer data", async () => {
+			nock(/.+/)
+				.get("/api/v2/peers")
+				.reply(200, {
+					data: dummyPeersWalletApi,
+				});
+
+			const validPeers = dummyPeersWalletApi.map(peer => ({ ip: peer.ip, port: 4140, version: peer.version }));
+			expect(await peerDiscovery.findPeersWithPlugin("core-wallet-api", {
+				additional: [
+					"version",
+				],
+			})).toEqual(validPeers);
+		});
+
+		it("should ignore additional peer data that does not exist", async () => {
+			nock(/.+/)
+				.get("/api/v2/peers")
+				.reply(200, {
+					data: dummyPeersWalletApi,
+				});
+
+			const validPeers = dummyPeersWalletApi.map(peer => ({ ip: peer.ip, port: 4140 }));
+			expect(await peerDiscovery.findPeersWithPlugin("core-wallet-api", {
+				additional: [
+					"fake",
+				],
+			})).toEqual(validPeers);
+		});
 	});
 });
