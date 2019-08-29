@@ -12,7 +12,7 @@ export class PeerDiscovery {
 
 	private constructor(private readonly seeds: IPeer[]) {}
 
-	public static async new(networkOrHost: string): Promise<PeerDiscovery> {
+	public static async new(networkOrHost: string, defaultPort: number = 4003): Promise<PeerDiscovery> {
 		const seeds: IPeer[] = [];
 
 		try {
@@ -20,7 +20,18 @@ export class PeerDiscovery {
 				const { body } = await got.get(networkOrHost);
 
 				for (const seed of JSON.parse(body).data) {
-					seeds.push({ ip: seed.ip, port: 4003 });
+					let port = defaultPort;
+					if (seed.ports) {
+						const walletApiPort = seed.ports['@arkecosystem/core-wallet-api'];
+						const apiPort = seed.ports['@arkecosystem/core-api'];
+						if (walletApiPort >= 1 && walletApiPort <= 65535) {
+							port = walletApiPort;
+						} else if (apiPort >= 1 && apiPort <= 65535) {
+							port = apiPort;
+						}
+					}
+
+					seeds.push({ ip: seed.ip, port });
 				}
 			} else {
 				const { body } = await got.get(
@@ -28,7 +39,7 @@ export class PeerDiscovery {
 				);
 
 				for (const seed of JSON.parse(body)) {
-					seeds.push({ ip: seed.ip, port: 4003 });
+					seeds.push({ ip: seed.ip, port: seed.port });
 				}
 			}
 		} catch (error) {
