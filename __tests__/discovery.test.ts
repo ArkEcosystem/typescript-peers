@@ -126,7 +126,7 @@ describe("PeerDiscovery", () => {
 					data: dummyPeersWalletApi,
 				});
 
-			expect(await peerDiscovery.findPeers()).toEqual(dummyPeersWalletApi);
+			await expect(peerDiscovery.findPeers()).resolves.toEqual(dummyPeersWalletApi);
 		});
 
 		it("should retry", async () => {
@@ -233,7 +233,7 @@ describe("PeerDiscovery", () => {
 					data: dummyPeersPublicApi,
 				});
 
-			expect(await peerDiscovery.findPeersWithPlugin("core-wallet-api")).toEqual([]);
+			await expect(peerDiscovery.findPeersWithPlugin("core-wallet-api")).resolves.toEqual([]);
 		});
 
 		it("should find peers with the wallet api plugin", async () => {
@@ -244,7 +244,7 @@ describe("PeerDiscovery", () => {
 				});
 
 			const validPeers = dummyPeersWalletApi.map(peer => ({ ip: peer.ip, port: 4140 }));
-			expect(await peerDiscovery.findPeersWithPlugin("core-wallet-api")).toEqual(validPeers);
+			await expect(peerDiscovery.findPeersWithPlugin("core-wallet-api")).resolves.toEqual(validPeers);
 		});
 
 		it("should get additional peer data", async () => {
@@ -255,11 +255,11 @@ describe("PeerDiscovery", () => {
 				});
 
 			const validPeers = dummyPeersWalletApi.map(peer => ({ ip: peer.ip, port: 4140, version: peer.version }));
-			expect(await peerDiscovery.findPeersWithPlugin("core-wallet-api", {
+			await expect(peerDiscovery.findPeersWithPlugin("core-wallet-api", {
 				additional: [
 					"version",
 				],
-			})).toEqual(validPeers);
+			})).resolves.toEqual(validPeers);
 		});
 
 		it("should ignore additional peer data that does not exist", async () => {
@@ -270,11 +270,11 @@ describe("PeerDiscovery", () => {
 				});
 
 			const validPeers = dummyPeersWalletApi.map(peer => ({ ip: peer.ip, port: 4140 }));
-			expect(await peerDiscovery.findPeersWithPlugin("core-wallet-api", {
+			await expect(peerDiscovery.findPeersWithPlugin("core-wallet-api", {
 				additional: [
 					"fake",
 				],
-			})).toEqual(validPeers);
+			})).resolves.toEqual(validPeers);
 		});
 	});
 });
