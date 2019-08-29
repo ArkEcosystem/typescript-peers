@@ -3,7 +3,6 @@ import isUrl from "is-url-superb";
 import orderBy from "lodash.orderby";
 import semver from "semver";
 import { IPeer, IPeerResponse } from "./interfaces";
-import { PeerProperties } from "./types";
 
 export class PeerDiscovery {
 	private version: string | undefined;
@@ -118,7 +117,7 @@ export class PeerDiscovery {
 		return orderBy(peers, [this.orderBy[0]], [this.orderBy[1] as any]);
 	}
 
-	public async findPeersWithPlugin(name: string, opts: { additional?: PeerProperties } = {}): Promise<IPeer[]> {
+	public async findPeersWithPlugin(name: string, opts: { additional?: string[] } = {}): Promise<IPeer[]> {
 		const peers: IPeer[] = [];
 
 		for (const peer of await this.findPeers(opts)) {
