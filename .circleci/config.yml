@@ -16,6 +16,7 @@ jobs:
                       - node_modules
                   key: v1-dependencies-{{ checksum "yarn.lock" }}
             - run: yarn build
+            - run: yarn test --coverage
             - run: ./node_modules/.bin/codecov
     node-11:
         docker:
@@ -33,6 +34,7 @@ jobs:
                       - node_modules
                   key: v1-dependencies-{{ checksum "yarn.lock" }}
             - run: yarn build
+            - run: yarn test --coverage
             - run: ./node_modules/.bin/codecov
     node-12:
         docker:
@@ -50,6 +52,7 @@ jobs:
                       - node_modules
                   key: v1-dependencies-{{ checksum "yarn.lock" }}
             - run: yarn build
+            - run: yarn test --coverage
             - run: ./node_modules/.bin/codecov
 workflows:
     version: 2
