@@ -81,7 +81,7 @@ export class PeerDiscovery {
 		}
 
 		if (!opts.timeout) {
-			opts.timeout = 1500;
+			opts.timeout = 3000;
 		}
 
 		const seed: IPeer = this.seeds[Math.floor(Math.random() * this.seeds.length)];
@@ -92,7 +92,6 @@ export class PeerDiscovery {
 				headers: {
 					"Content-Type": "application/json",
 				},
-				timeout: 3000,
 			},
 		});
 
