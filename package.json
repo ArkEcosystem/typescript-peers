@@ -29,7 +29,7 @@
 		"test:watch": "jest --watchAll"
 	},
 	"jest": {
-		"bail": false,
+		"bail": true,
 		"collectCoverage": true,
 		"collectCoverageFrom": [
 			"src/**/*.ts",
@@ -63,7 +63,7 @@
 		"transform": {
 			"^.+\\.tsx?$": "ts-jest"
 		},
-		"verbose": true
+		"verbose": false
 	},
 	"dependencies": {
 		"got": "^9.6.0",

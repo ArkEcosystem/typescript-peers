@@ -15,20 +15,24 @@ export class PeerDiscovery {
 	public static async new(networkOrHost: string): Promise<PeerDiscovery> {
 		const seeds: IPeer[] = [];
 
-		if (isUrl(networkOrHost)) {
-			const { body } = await got.get(networkOrHost);
+		try {
+			if (isUrl(networkOrHost)) {
+				const { body } = await got.get(networkOrHost);
 
-			for (const seed of JSON.parse(body).data) {
-				seeds.push({ ip: seed.ip, port: 4003 });
-			}
-		} else {
-			const { body } = await got.get(
-				`https://raw.githubusercontent.com/ArkEcosystem/peers/master/${networkOrHost}.json`,
-			);
+				for (const seed of JSON.parse(body).data) {
+					seeds.push({ ip: seed.ip, port: 4003 });
+				}
+			} else {
+				const { body } = await got.get(
+					`https://raw.githubusercontent.com/ArkEcosystem/peers/master/${networkOrHost}.json`,
+				);
 
-			for (const seed of JSON.parse(body)) {
-				seeds.push({ ip: seed.ip, port: 4003 });
+				for (const seed of JSON.parse(body)) {
+					seeds.push({ ip: seed.ip, port: 4003 });
+				}
 			}
+		} catch (error) {
+			throw new Error("Failed to discovery any peers.");
 		}
 
 		if (!seeds.length) {
@@ -36,6 +40,10 @@ export class PeerDiscovery {
 		}
 
 		return new PeerDiscovery(seeds);
+	}
+
+	public getSeeds(): IPeer[] {
+		return this.seeds;
 	}
 
 	public withVersion(version: string): PeerDiscovery {
