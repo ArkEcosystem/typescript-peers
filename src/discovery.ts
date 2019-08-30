@@ -48,7 +48,7 @@ export class PeerDiscovery {
 				);
 
 				for (const seed of JSON.parse(body)) {
-					seeds.push({ ip: seed.ip, port: 4003 });
+					seeds.push({ ip: seed.ip, port: defaultPort });
 				}
 			}
 		} catch (error) {
