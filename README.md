@@ -25,7 +25,11 @@ yarn add @arkecosystem/peers
 ```ts
 import { PeerDiscovery } from "@arkecosystem/peers";
 
-await PeerDiscovery.new("devnet")
+peerDiscovery = await PeerDiscovery.new({
+	networkOrHost: "devnet"
+})
+
+peers = peerDiscovery
 	.withVersion(">=2.4.0-next.0")
 	.withLatency(300)
 	.sortBy("latency")
@@ -37,7 +41,11 @@ await PeerDiscovery.new("devnet")
 ```ts
 import { PeerDiscovery } from "@arkecosystem/peers";
 
-await PeerDiscovery.new("http://dexplorer.ark.io/api/v2/peers")
+peerDiscovery = await PeerDiscovery.new({
+	networkOrHost: "http://dexplorer.ark.io/api/v2/peers",
+})
+
+peers = peerDiscovery
 	.withVersion(">=2.4.0-next.0")
 	.withLatency(300)
 	.sortBy("latency")
