@@ -1,4 +1,4 @@
-import got from "got";
+import ky from "ky-universal";
 import isUrl from "is-url-superb";
 import orderBy from "lodash.orderby";
 import semver from "semver";
@@ -26,9 +26,9 @@ export class PeerDiscovery {
 
 		try {
 			if (isUrl(networkOrHost)) {
-				const { body } = await got.get(networkOrHost);
+				const body: any = await ky.get(networkOrHost).json();
 
-				for (const seed of JSON.parse(body).data) {
+				for (const seed of body.data) {
 					let port = defaultPort;
 					if (seed.ports) {
 						const walletApiPort = seed.ports["@arkecosystem/core-wallet-api"];
@@ -43,11 +43,11 @@ export class PeerDiscovery {
 					seeds.push({ ip: seed.ip, port });
 				}
 			} else {
-				const { body } = await got.get(
+				const body: any = await ky.get(
 					`https://raw.githubusercontent.com/ArkEcosystem/peers/master/${networkOrHost}.json`,
-				);
+				).json();
 
-				for (const seed of JSON.parse(body)) {
+				for (const seed of body) {
 					seeds.push({ ip: seed.ip, port: defaultPort });
 				}
 			}
@@ -95,16 +95,16 @@ export class PeerDiscovery {
 
 		const seed: IPeer = this.seeds[Math.floor(Math.random() * this.seeds.length)];
 
-		const { body } = await got.get(`http://${seed.ip}:${seed.port}/api/v2/peers`, {
+		const body: any = await ky(`http://${seed.ip}:${seed.port}/api/v2/peers`, {
 			...opts,
 			...{
 				headers: {
 					"Content-Type": "application/json",
 				},
 			},
-		});
+		}).json();
 
-		let peers: IPeerResponse[] = JSON.parse(body).data;
+		let peers: IPeerResponse[] = body.data;
 
 		if (this.version) {
 			peers = peers.filter((peer: IPeerResponse) => semver.satisfies(peer.version, this.version));

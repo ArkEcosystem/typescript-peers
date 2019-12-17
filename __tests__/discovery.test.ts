@@ -140,7 +140,7 @@ describe("PeerDiscovery", () => {
 				});
 
 			const peers = await peerDiscovery.findPeers({
-				retry: { retries: 3 },
+				retry: { limit: 3 },
 			});
 
 			expect(peers).toEqual(dummyPeersWalletApi);
@@ -158,7 +158,7 @@ describe("PeerDiscovery", () => {
 				peerDiscovery.findPeers({
 					timeout: 1000,
 				}),
-			).rejects.toThrowError(new Error("Timeout awaiting 'request' for 1000ms"));
+			).rejects.toThrowError(new Error("Request timed out"));
 		});
 
 		it("should filter by version", async () => {
