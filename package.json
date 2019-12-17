@@ -66,7 +66,7 @@
 		"verbose": false
 	},
 	"dependencies": {
-		"got": "^9.6.0",
+		"got": "^10.0.0",
 		"is-url-superb": "^3.0.0",
 		"lodash.orderby": "^4.6.0",
 		"nock": "^11.0.0-beta.31",
