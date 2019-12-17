@@ -86,7 +86,7 @@ export class PeerDiscovery {
 
 	public async findPeers(opts: any = {}): Promise<IPeerResponse[]> {
 		if (!opts.retry) {
-			opts.retry = { retries: 0 };
+			opts.retry = { limit: 0 };
 		}
 
 		if (!opts.timeout) {
