@@ -81,7 +81,7 @@
 		"@types/rimraf": "^2.0.3",
 		"@types/semver": "^6.2.0",
 		"codecov": "^3.6.1",
-		"jest": "^24.9.0",
+		"jest": "^25.0.0",
 		"jest-extended": "^0.11.2",
 		"prettier": "^1.19.1",
 		"rimraf": "^3.0.0",
