@@ -68,7 +68,7 @@
 	"dependencies": {
 		"is-url-superb": "^3.0.0",
 		"ky": "^0.16.1",
-		"ky-universal": "^0.3.0",
+		"ky-universal": "^0.5.0",
 		"lodash.orderby": "^4.6.0",
 		"nock": "^11.7.0",
 		"semver": "^7.1.0"
