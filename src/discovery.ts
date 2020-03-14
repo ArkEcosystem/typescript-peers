@@ -151,4 +151,24 @@ export class PeerDiscovery {
 
 		return peers;
 	}
+
+	public async findPeersWithoutEstimates(opts: { additional?: string[] } = {}): Promise<IPeer[]> {
+		const apiPeers: IPeer[] = await this.findPeersWithPlugin('core-api', opts);
+
+		const requests = apiPeers.map(peer => {
+			return ky.get(`http://${peer.ip}:${peer.port}/api/v2/blocks?limit=1`).json();
+		});
+
+		const responses = await Promise.all(requests);
+
+		const peers: IPeer[] = [];
+
+		for (const i in responses) {
+			if (!(responses[i] as any).meta.totalCountIsEstimate) {
+				peers.push(apiPeers[i]);
+			}
+		}
+
+		return peers;
+	}
 }
