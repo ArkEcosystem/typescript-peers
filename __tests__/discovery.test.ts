@@ -277,4 +277,35 @@ describe("PeerDiscovery", () => {
 			})).resolves.toEqual(validPeers);
 		});
 	});
+
+	describe("findPeersWithoutEstimates", () => {
+		let peerDiscovery: PeerDiscovery;
+		beforeEach(async () => {
+			nock("http://127.0.0.1")
+				.get("/api/v2/peers")
+				.reply(200, {
+					data: dummyPeersWalletApi,
+				});
+
+			peerDiscovery = await PeerDiscovery.new({ networkOrHost: "http://127.0.0.1/api/v2/peers" });
+		});
+
+		it("should find peers without estimates", async () => {
+			nock(/.+/)
+				.get("/api/v2/peers")
+				.reply(200, {
+					data: dummyPeersPublicApi,
+				})
+				.persist()
+				.get("/api/v2/blocks?limit=1")
+				.reply(200, {
+					meta: {
+						totalCountIsEstimate: false,
+					},
+				});
+
+			const validPeers = dummyPeersPublicApi.map(peer => ({ ip: peer.ip, port: 4103 }));
+			await expect(peerDiscovery.findPeersWithoutEstimates()).resolves.toEqual(validPeers);
+		});
+	});
 });
