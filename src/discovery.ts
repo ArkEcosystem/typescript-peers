@@ -95,7 +95,7 @@ export class PeerDiscovery {
 
 		const seed: IPeer = this.seeds[Math.floor(Math.random() * this.seeds.length)];
 
-		const body: any = await ky(`http://${seed.ip}:${seed.port}/api/v2/peers`, {
+		const body: any = await ky(`http://${seed.ip}:${seed.port}/api/peers`, {
 			...opts,
 			...{
 				headers: {
@@ -156,7 +156,7 @@ export class PeerDiscovery {
 		const apiPeers: IPeer[] = await this.findPeersWithPlugin('core-api', opts);
 
 		const requests = apiPeers.map(peer => {
-			return ky.get(`http://${peer.ip}:${peer.port}/api/v2/blocks?limit=1`).json();
+			return ky.get(`http://${peer.ip}:${peer.port}/api/blocks?limit=1`).json();
 		});
 
 		const responses = await Promise.all(requests);

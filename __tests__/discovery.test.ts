@@ -19,13 +19,13 @@ describe("PeerDiscovery", () => {
 		describe("host", () => {
 			it("should fetch peers", async () => {
 				nock("http://127.0.0.1")
-					.get("/api/v2/peers")
+					.get("/api/peers")
 					.reply(200, {
 						data: dummyPeersWalletApi,
 					});
 
 				const peerDiscovery: PeerDiscovery = await PeerDiscovery.new({
-					networkOrHost: "http://127.0.0.1/api/v2/peers",
+					networkOrHost: "http://127.0.0.1/api/peers",
 				});
 
 				expect(peerDiscovery.getSeeds()).toEqual(
@@ -38,13 +38,13 @@ describe("PeerDiscovery", () => {
 
 			it("should fetch peers and fallback to public api port", async () => {
 				nock("http://127.0.0.1")
-					.get("/api/v2/peers")
+					.get("/api/peers")
 					.reply(200, {
 						data: dummyPeersPublicApi,
 					});
 
 				const peerDiscovery: PeerDiscovery = await PeerDiscovery.new({
-					networkOrHost: "http://127.0.0.1/api/v2/peers",
+					networkOrHost: "http://127.0.0.1/api/peers",
 				});
 
 				expect(peerDiscovery.getSeeds()).toEqual(
@@ -57,14 +57,14 @@ describe("PeerDiscovery", () => {
 
 			it("should fail if the seed list is empty", async () => {
 				nock("http://127.0.0.1")
-					.get("/api/v2/peers")
+					.get("/api/peers")
 					.reply(200, {
 						data: [],
 					});
 
 				await expect(
 					PeerDiscovery.new({
-						networkOrHost: "http://127.0.0.1/api/v2/peers",
+						networkOrHost: "http://127.0.0.1/api/peers",
 					}),
 				).rejects.toThrowError(new Error("No seeds found"));
 			});
@@ -111,17 +111,17 @@ describe("PeerDiscovery", () => {
 		let peerDiscovery: PeerDiscovery;
 		beforeEach(async () => {
 			nock("http://127.0.0.1")
-				.get("/api/v2/peers")
+				.get("/api/peers")
 				.reply(200, {
 					data: dummyPeersWalletApi,
 				});
 
-			peerDiscovery = await PeerDiscovery.new({ networkOrHost: "http://127.0.0.1/api/v2/peers" });
+			peerDiscovery = await PeerDiscovery.new({ networkOrHost: "http://127.0.0.1/api/peers" });
 		});
 
 		it("should find peers", async () => {
 			nock(/.+/)
-				.get("/api/v2/peers")
+				.get("/api/peers")
 				.reply(200, {
 					data: dummyPeersWalletApi,
 				});
@@ -131,10 +131,10 @@ describe("PeerDiscovery", () => {
 
 		it("should retry", async () => {
 			nock(/.+/)
-				.get("/api/v2/peers")
+				.get("/api/peers")
 				.twice()
 				.reply(500)
-				.get("/api/v2/peers")
+				.get("/api/peers")
 				.reply(200, {
 					data: dummyPeersWalletApi,
 				});
@@ -148,7 +148,7 @@ describe("PeerDiscovery", () => {
 
 		it("should timeout", async () => {
 			nock(/.+/)
-				.get("/api/v2/peers")
+				.get("/api/peers")
 				.delay(2000)
 				.reply(200, {
 					data: dummyPeersWalletApi,
@@ -163,7 +163,7 @@ describe("PeerDiscovery", () => {
 
 		it("should filter by version", async () => {
 			nock(/.+/)
-				.get("/api/v2/peers")
+				.get("/api/peers")
 				.twice()
 				.reply(200, {
 					data: dummyPeersWalletApi,
@@ -176,7 +176,7 @@ describe("PeerDiscovery", () => {
 
 		it("should filter by latency", async () => {
 			nock(/.+/)
-				.get("/api/v2/peers")
+				.get("/api/peers")
 				.twice()
 				.reply(200, {
 					data: dummyPeersWalletApi,
@@ -189,7 +189,7 @@ describe("PeerDiscovery", () => {
 
 		it("should sort by latency asc", async () => {
 			nock(/.+/)
-				.get("/api/v2/peers")
+				.get("/api/peers")
 				.reply(200, {
 					data: dummyPeersWalletApi,
 				});
@@ -202,7 +202,7 @@ describe("PeerDiscovery", () => {
 
 		it("should sort by version desc", async () => {
 			nock(/.+/)
-				.get("/api/v2/peers")
+				.get("/api/peers")
 				.reply(200, {
 					data: dummyPeersWalletApi,
 				});
@@ -218,17 +218,17 @@ describe("PeerDiscovery", () => {
 		let peerDiscovery: PeerDiscovery;
 		beforeEach(async () => {
 			nock("http://127.0.0.1")
-				.get("/api/v2/peers")
+				.get("/api/peers")
 				.reply(200, {
 					data: dummyPeersWalletApi,
 				});
 
-			peerDiscovery = await PeerDiscovery.new({ networkOrHost: "http://127.0.0.1/api/v2/peers" });
+			peerDiscovery = await PeerDiscovery.new({ networkOrHost: "http://127.0.0.1/api/peers" });
 		});
 
 		it("should find peers without the wallet api plugin", async () => {
 			nock(/.+/)
-				.get("/api/v2/peers")
+				.get("/api/peers")
 				.reply(200, {
 					data: dummyPeersPublicApi,
 				});
@@ -238,7 +238,7 @@ describe("PeerDiscovery", () => {
 
 		it("should find peers with the wallet api plugin", async () => {
 			nock(/.+/)
-				.get("/api/v2/peers")
+				.get("/api/peers")
 				.reply(200, {
 					data: dummyPeersWalletApi,
 				});
@@ -249,7 +249,7 @@ describe("PeerDiscovery", () => {
 
 		it("should get additional peer data", async () => {
 			nock(/.+/)
-				.get("/api/v2/peers")
+				.get("/api/peers")
 				.reply(200, {
 					data: dummyPeersWalletApi,
 				});
@@ -264,7 +264,7 @@ describe("PeerDiscovery", () => {
 
 		it("should ignore additional peer data that does not exist", async () => {
 			nock(/.+/)
-				.get("/api/v2/peers")
+				.get("/api/peers")
 				.reply(200, {
 					data: dummyPeersWalletApi,
 				});
@@ -282,22 +282,22 @@ describe("PeerDiscovery", () => {
 		let peerDiscovery: PeerDiscovery;
 		beforeEach(async () => {
 			nock("http://127.0.0.1")
-				.get("/api/v2/peers")
+				.get("/api/peers")
 				.reply(200, {
 					data: dummyPeersWalletApi,
 				});
 
-			peerDiscovery = await PeerDiscovery.new({ networkOrHost: "http://127.0.0.1/api/v2/peers" });
+			peerDiscovery = await PeerDiscovery.new({ networkOrHost: "http://127.0.0.1/api/peers" });
 		});
 
 		it("should find peers without estimates", async () => {
 			nock(/.+/)
-				.get("/api/v2/peers")
+				.get("/api/peers")
 				.reply(200, {
 					data: dummyPeersPublicApi,
 				})
 				.persist()
-				.get("/api/v2/blocks?limit=1")
+				.get("/api/blocks?limit=1")
 				.reply(200, {
 					meta: {
 						totalCountIsEstimate: false,

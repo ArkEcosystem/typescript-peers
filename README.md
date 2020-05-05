@@ -42,7 +42,7 @@ peers = peerDiscovery
 import { PeerDiscovery } from "@arkecosystem/peers";
 
 peerDiscovery = await PeerDiscovery.new({
-	networkOrHost: "http://dexplorer.ark.io/api/v2/peers",
+	networkOrHost: "http://dexplorer.ark.io/api/peers",
 })
 
 peers = peerDiscovery
