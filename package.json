@@ -1,6 +1,6 @@
 {
 	"name": "@arkecosystem/peers",
-	"version": "0.2.1",
+	"version": "0.3.0",
 	"description": "A simple TypeScript peer discovery client for the ARK Blockchain.",
 	"homepage": "https://github.com/ArkEcosystem/typescript-peers",
 	"bugs": {
